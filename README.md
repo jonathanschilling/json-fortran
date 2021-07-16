@@ -19,7 +19,7 @@ program test_json
 end program
 ```
 
-produces the following JSON output in :
+produces the following JSON output in `test.json`:
 
 ```json
 {"a":42,"b":[1,2,3],"c":[[1,2,3],[4,5,6]]}
