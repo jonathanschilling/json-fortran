@@ -3,9 +3,12 @@ module json
 implicit none
 
 integer, parameter :: iunit = 42
+integer, parameter :: dp = selected_real_kind(15, 300)
 logical  :: has_previous
 
 contains
+
+!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-
 
 subroutine open_dbg_out(filename)
   character(len=*), intent(in) :: filename
@@ -19,6 +22,8 @@ subroutine close_dbg_out
   write(iunit, '(A)', advance="no") "}"
   close(iunit)
 end subroutine close_dbg_out
+
+!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-
 
 subroutine add_element(name, content)
   character(len=*), intent(in) :: name
@@ -214,6 +219,8 @@ subroutine add_array_5d(name, n1, n2, n3, n4, n5, content)
   has_previous = .true.
 end subroutine add_array_5d
 
+!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-
+
 subroutine add_int(name, val)
   character(len=*), intent(in) :: name
   integer         , intent(in) :: val
@@ -328,5 +335,123 @@ subroutine add_int_5d(name, n1, n2, n3, n4, n5, arr)
 
   deallocate(temp)
 end subroutine add_int_5d
+
+!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-
+
+subroutine add_real(name, val)
+  character(len=*), intent(in) :: name
+  real(dp)        , intent(in) :: val
+
+  character(len=64) :: temp
+
+  write(temp, *) val
+  call add_element(name, temp)
+end subroutine add_real
+
+subroutine add_real_1d(name, n, arr)
+  character(len=*), intent(in) :: name
+  integer, intent(in) :: n
+  real(dp), dimension(n), intent(in) :: arr
+
+  character(len=64), dimension(:), allocatable :: temp
+  integer :: i
+
+  allocate(temp(n))
+  do i = 1, n
+    write(temp(i), *) arr(i)
+  end do
+  call add_array_1d(name, n, temp)
+
+  deallocate(temp)
+end subroutine add_real_1d
+
+subroutine add_real_2d(name, n1, n2, arr)
+  character(len=*), intent(in) :: name
+  integer, intent(in) :: n1, n2
+  real(dp), dimension(n1, n2), intent(in) :: arr
+
+  character(len=64), dimension(:,:), allocatable :: temp
+  integer :: i, j
+
+  allocate(temp(n1, n2))
+  do i = 1, n1
+    do j = 1, n2
+      write(temp(i,j), *) arr(i,j)
+    end do
+  end do
+  call add_array_2d(name, n1, n2, temp)
+
+  deallocate(temp)
+end subroutine add_real_2d
+
+subroutine add_real_3d(name, n1, n2, n3, arr)
+  character(len=*), intent(in) :: name
+  integer, intent(in) :: n1, n2, n3
+  real(dp), dimension(n1, n2, n3), intent(in) :: arr
+
+  character(len=64), dimension(:,:,:), allocatable :: temp
+  integer :: i, j, k
+
+  allocate(temp(n1,n2,n3))
+  do i = 1, n1
+    do j = 1, n2
+      do k = 1, n3
+        write(temp(i,j,k), *) arr(i,j,k)
+      end do
+    end do
+  end do
+  call add_array_3d(name, n1, n2, n3, temp)
+
+  deallocate(temp)
+end subroutine add_real_3d
+
+subroutine add_real_4d(name, n1, n2, n3, n4, arr)
+  character(len=*), intent(in) :: name
+  integer, intent(in) :: n1, n2, n3, n4
+  real(dp), dimension(n1,n2,n3,n4), intent(in) :: arr
+
+  character(len=64), dimension(:,:,:,:), allocatable :: temp
+  integer :: i, j, k, l
+
+  allocate(temp(n1,n2,n3,n4))
+  do i = 1, n1
+    do j = 1, n2
+      do k = 1, n3
+        do l = 1, n4
+          write(temp(i,j,k,l), *) arr(i,j,k,l)
+        end do
+      end do
+    end do
+  end do
+  call add_array_4d(name, n1, n2, n3, n4, temp)
+
+  deallocate(temp)
+end subroutine add_real_4d
+
+subroutine add_real_5d(name, n1, n2, n3, n4, n5, arr)
+  character(len=*), intent(in) :: name
+  integer, intent(in) :: n1, n2, n3, n4, n5
+  real(dp), dimension(n1,n2,n3,n4,n5), intent(in) :: arr
+
+  character(len=64), dimension(:,:,:,:,:), allocatable :: temp
+  integer :: i, j, k, l, m
+
+  allocate(temp(n1,n2,n3,n4, n5))
+  do i = 1, n1
+    do j = 1, n2
+      do k = 1, n3
+        do l = 1, n4
+          do m = 1, n5
+            write(temp(i,j,k,l,m), *) arr(i,j,k,l,m)
+          end do
+        end do
+      end do
+    end do
+  end do
+  call add_array_5d(name, n1, n2, n3, n4, n5, temp)
+
+  deallocate(temp)
+end subroutine add_real_5d
+
 
 end module json
