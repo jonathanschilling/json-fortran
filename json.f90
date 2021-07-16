@@ -64,18 +64,20 @@ subroutine add_array_2d(name, n2, n1, content)
   end if
 
   write(iunit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
-  do i = 1, n1-1
+  do i = 1, n1
     write(iunit, '(A)', advance="no") '['
-    do j = 1, n2-1
-      write(iunit, '(2A)', advance="no") trim(adjustl(content(j, i))),','
+    do j = 1, n2
+      write(iunit, '(2A)', advance="no") trim(adjustl(content(j, i)))
+      if (j .lt. n2) then
+        write(iunit, '(2A)', advance="no") ','
+      end if
     end do
-    write(iunit, '(2A)', advance="no") trim(adjustl(content(n2, i))),'],'
+    write(iunit, '(2A)', advance="no") ']'
+    if (i .lt. n1) then
+      write(iunit, '(2A)', advance="no") ','
+    end if
   end do
-  write(iunit, '(A)', advance="no") '['
-  do j = 1, n2-1
-    write(iunit, '(2A)', advance="no") trim(adjustl(content(j, n1))),','
-  end do
-  write(iunit, '(2A)', advance="no") trim(adjustl(content(n2,n1))),']'
+  write(iunit, '(2A)', advance="no") ']'
 
   has_previous = .true.
 end subroutine add_array_2d
