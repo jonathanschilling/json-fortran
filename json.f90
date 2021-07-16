@@ -82,6 +82,43 @@ subroutine add_array_2d(name, n2, n1, content)
   has_previous = .true.
 end subroutine add_array_2d
 
+subroutine add_array_3d(name, n3, n2, n1, content)
+  character(len=*), intent(in) :: name
+  integer, intent(in) :: n3, n2, n1
+  character(len=*), dimension(n3,n2,n1), intent(in) :: content
+
+  integer :: i, j, k
+
+  if (has_previous) then
+    write(iunit, '(A)', advance="no") ','
+  end if
+
+  write(iunit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
+  do i = 1, n1
+    write(iunit, '(A)', advance="no") '['
+    do j = 1, n2
+      write(iunit, '(A)', advance="no") '['
+      do k = 1, n3
+        write(iunit, '(2A)', advance="no") trim(adjustl(content(k,j,i)))
+        if (k .lt. n3) then
+          write(iunit, '(2A)', advance="no") ','
+        end if
+      end do
+      write(iunit, '(2A)', advance="no") ']'
+      if (j .lt. n2) then
+        write(iunit, '(2A)', advance="no") ','
+      end if
+    end do
+    write(iunit, '(2A)', advance="no") ']'
+    if (i .lt. n1) then
+      write(iunit, '(2A)', advance="no") ','
+    end if
+  end do
+  write(iunit, '(2A)', advance="no") ']'
+
+  has_previous = .true.
+end subroutine add_array_3d
+
 subroutine add_int(name, val)
   character(len=*), intent(in) :: name
   integer         , intent(in) :: val
@@ -128,5 +165,25 @@ subroutine add_int_2d(name, n2, n1, arr)
   deallocate(temp)
 end subroutine add_int_2d
 
+subroutine add_int_3d(name, n3, n2, n1, arr)
+  character(len=*), intent(in) :: name
+  integer, intent(in) :: n3, n2, n1
+  integer, dimension(n3, n2, n1), intent(in) :: arr
+
+  character(len=64), dimension(:,:,:), allocatable :: temp
+  integer :: i, j, k
+
+  allocate(temp(n3,n2,n1))
+  do i = 1, n1
+    do j = 1, n2
+      do k = 1, n3
+        write(temp(k,j,i), *) arr(k,j,i)
+      end do
+    end do
+  end do
+  call add_array_3d(name, n3, n2, n1, temp)
+
+  deallocate(temp)
+end subroutine add_int_3d
 
 end module json
