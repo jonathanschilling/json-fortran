@@ -3,7 +3,7 @@ module json
 implicit none
 
 integer, parameter :: iunit = 42
-integer, parameter :: dp = selected_real_kind(15, 300)
+integer, parameter, private :: dp = selected_real_kind(15, 300)
 logical  :: has_previous
 
 contains
@@ -69,16 +69,16 @@ subroutine add_array_2d(name, n1, n2, content)
   end if
 
   write(iunit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
-  do j = 1, n2
+  do i = 1, n1
     write(iunit, '(A)', advance="no") '['
-    do i = 1, n1
+    do j = 1, n2
       write(iunit, '(2A)', advance="no") trim(adjustl(content(i,j)))
-      if (i .lt. n1) then
+      if (j .lt. n2) then
         write(iunit, '(2A)', advance="no") ','
       end if
     end do
     write(iunit, '(2A)', advance="no") ']'
-    if (j .lt. n2) then
+    if (i .lt. n1) then
       write(iunit, '(2A)', advance="no") ','
     end if
   end do
@@ -99,13 +99,13 @@ subroutine add_array_3d(name, n1, n2, n3, content)
   end if
 
   write(iunit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
-  do k = 1, n3
+  do i = 1, n1
     write(iunit, '(A)', advance="no") '['
     do j = 1, n2
       write(iunit, '(A)', advance="no") '['
-      do i = 1, n1
+      do k = 1, n3
         write(iunit, '(2A)', advance="no") trim(adjustl(content(i,j,k)))
-        if (i .lt. n1) then
+        if (k .lt. n3) then
           write(iunit, '(2A)', advance="no") ','
         end if
       end do
@@ -115,7 +115,7 @@ subroutine add_array_3d(name, n1, n2, n3, content)
       end if
     end do
     write(iunit, '(2A)', advance="no") ']'
-    if (k .lt. n3) then
+    if (i .lt. n1) then
       write(iunit, '(2A)', advance="no") ','
     end if
   end do
@@ -136,30 +136,30 @@ subroutine add_array_4d(name, n1, n2, n3, n4, content)
   end if
 
   write(iunit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
-  do l = 1, n4
+  do i = 1, n1
     write(iunit, '(A)', advance="no") '['
-    do k = 1, n3
+    do j = 1, n2
       write(iunit, '(A)', advance="no") '['
-      do j = 1, n2
+      do k = 1, n3
         write(iunit, '(A)', advance="no") '['
-        do i = 1, n1
+        do l = 1, n4
           write(iunit, '(2A)', advance="no") trim(adjustl(content(i,j,k,l)))
-          if (i .lt. n1) then
+          if (l .lt. n4) then
             write(iunit, '(2A)', advance="no") ','
           end if
         end do
         write(iunit, '(2A)', advance="no") ']'
-        if (j .lt. n2) then
+        if (k .lt. n3) then
           write(iunit, '(2A)', advance="no") ','
         end if
       end do
       write(iunit, '(2A)', advance="no") ']'
-      if (k .lt. n3) then
+      if (j .lt. n2) then
         write(iunit, '(2A)', advance="no") ','
       end if
     end do
     write(iunit, '(2A)', advance="no") ']'
-    if (l .lt. n4) then
+    if (i .lt. n1) then
       write(iunit, '(2A)', advance="no") ','
     end if
   end do
@@ -180,22 +180,22 @@ subroutine add_array_5d(name, n1, n2, n3, n4, n5, content)
   end if
 
   write(iunit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
-  do m = 1, n5
+  do i = 1, n1
     write(iunit, '(A)', advance="no") '['
-    do l = 1, n4
+    do j = 1, n2
       write(iunit, '(A)', advance="no") '['
       do k = 1, n3
         write(iunit, '(A)', advance="no") '['
-        do j = 1, n2
+        do l = 1, n4
           write(iunit, '(A)', advance="no") '['
-          do i = 1, n1
+          do m = 1, n5
             write(iunit, '(2A)', advance="no") trim(adjustl(content(i,j,k,l,m)))
-            if (i .lt. n1) then
+            if (m .lt. n5) then
               write(iunit, '(2A)', advance="no") ','
             end if
           end do
           write(iunit, '(2A)', advance="no") ']'
-          if (j .lt. n2) then
+          if (l .lt. n3) then
             write(iunit, '(2A)', advance="no") ','
           end if
         end do
@@ -205,12 +205,12 @@ subroutine add_array_5d(name, n1, n2, n3, n4, n5, content)
         end if
       end do
       write(iunit, '(2A)', advance="no") ']'
-      if (l .lt. n4) then
+      if (j .lt. n2) then
         write(iunit, '(2A)', advance="no") ','
       end if
     end do
     write(iunit, '(2A)', advance="no") ']'
-    if (m .lt. n5) then
+    if (i .lt. n1) then
       write(iunit, '(2A)', advance="no") ','
     end if
   end do
