@@ -2,7 +2,7 @@ module json
 
 implicit none
 
-integer, parameter :: iunit = 42
+integer, parameter :: dbg_unit = 42
 integer, parameter, private :: dp = selected_real_kind(15, 300)
 logical  :: has_previous
 
@@ -13,14 +13,14 @@ contains
 subroutine open_dbg_out(filename)
   character(len=*), intent(in) :: filename
 
-  open(unit=iunit, file=trim(filename), status="unknown")
-  write(iunit, '(A)', advance="no") "{"
+  open(unit=dbg_unit, file=trim(filename), status="unknown")
+  write(dbg_unit, '(A)', advance="no") "{"
   has_previous = .false.
 end subroutine open_dbg_out
 
 subroutine close_dbg_out
-  write(iunit, '(A)', advance="no") "}"
-  close(iunit)
+  write(dbg_unit, '(A)', advance="no") "}"
+  close(dbg_unit)
 end subroutine close_dbg_out
 
 !-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-
@@ -30,9 +30,9 @@ subroutine add_element(name, content)
   character(len=*), intent(in) :: content
 
   if (has_previous) then
-    write(iunit, '(A)', advance="no") ','
+    write(dbg_unit, '(A)', advance="no") ','
   end if
-  write(iunit, '(4A)', advance="no") '"',trim(adjustl(name)),'":',trim(adjustl(content))
+  write(dbg_unit, '(4A)', advance="no") '"',trim(adjustl(name)),'":',trim(adjustl(content))
 
   has_previous = .true.
 end subroutine add_element
@@ -45,14 +45,14 @@ subroutine add_array_1d(name, n, content)
   integer :: i
 
   if (has_previous) then
-    write(iunit, '(A)', advance="no") ','
+    write(dbg_unit, '(A)', advance="no") ','
   end if
 
-  write(iunit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
+  write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
   do i = 1, n-1
-    write(iunit, '(2A)', advance="no") trim(adjustl(content(i))),','
+    write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(i))),','
   end do
-  write(iunit, '(2A)', advance="no") trim(adjustl(content(n))),']'
+  write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(n))),']'
 
   has_previous = .true.
 end subroutine add_array_1d
@@ -65,24 +65,24 @@ subroutine add_array_2d(name, n1, n2, content)
   integer :: i, j
 
   if (has_previous) then
-    write(iunit, '(A)', advance="no") ','
+    write(dbg_unit, '(A)', advance="no") ','
   end if
 
-  write(iunit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
+  write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
   do i = 1, n1
-    write(iunit, '(A)', advance="no") '['
+    write(dbg_unit, '(A)', advance="no") '['
     do j = 1, n2
-      write(iunit, '(2A)', advance="no") trim(adjustl(content(i,j)))
+      write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(i,j)))
       if (j .lt. n2) then
-        write(iunit, '(2A)', advance="no") ','
+        write(dbg_unit, '(2A)', advance="no") ','
       end if
     end do
-    write(iunit, '(2A)', advance="no") ']'
+    write(dbg_unit, '(2A)', advance="no") ']'
     if (i .lt. n1) then
-      write(iunit, '(2A)', advance="no") ','
+      write(dbg_unit, '(2A)', advance="no") ','
     end if
   end do
-  write(iunit, '(2A)', advance="no") ']'
+  write(dbg_unit, '(2A)', advance="no") ']'
 
   has_previous = .true.
 end subroutine add_array_2d
@@ -95,31 +95,31 @@ subroutine add_array_3d(name, n1, n2, n3, content)
   integer :: i, j, k
 
   if (has_previous) then
-    write(iunit, '(A)', advance="no") ','
+    write(dbg_unit, '(A)', advance="no") ','
   end if
 
-  write(iunit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
+  write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
   do i = 1, n1
-    write(iunit, '(A)', advance="no") '['
+    write(dbg_unit, '(A)', advance="no") '['
     do j = 1, n2
-      write(iunit, '(A)', advance="no") '['
+      write(dbg_unit, '(A)', advance="no") '['
       do k = 1, n3
-        write(iunit, '(2A)', advance="no") trim(adjustl(content(i,j,k)))
+        write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(i,j,k)))
         if (k .lt. n3) then
-          write(iunit, '(2A)', advance="no") ','
+          write(dbg_unit, '(2A)', advance="no") ','
         end if
       end do
-      write(iunit, '(2A)', advance="no") ']'
+      write(dbg_unit, '(2A)', advance="no") ']'
       if (j .lt. n2) then
-        write(iunit, '(2A)', advance="no") ','
+        write(dbg_unit, '(2A)', advance="no") ','
       end if
     end do
-    write(iunit, '(2A)', advance="no") ']'
+    write(dbg_unit, '(2A)', advance="no") ']'
     if (i .lt. n1) then
-      write(iunit, '(2A)', advance="no") ','
+      write(dbg_unit, '(2A)', advance="no") ','
     end if
   end do
-  write(iunit, '(2A)', advance="no") ']'
+  write(dbg_unit, '(2A)', advance="no") ']'
 
   has_previous = .true.
 end subroutine add_array_3d
@@ -132,38 +132,38 @@ subroutine add_array_4d(name, n1, n2, n3, n4, content)
   integer :: i, j, k, l
 
   if (has_previous) then
-    write(iunit, '(A)', advance="no") ','
+    write(dbg_unit, '(A)', advance="no") ','
   end if
 
-  write(iunit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
+  write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
   do i = 1, n1
-    write(iunit, '(A)', advance="no") '['
+    write(dbg_unit, '(A)', advance="no") '['
     do j = 1, n2
-      write(iunit, '(A)', advance="no") '['
+      write(dbg_unit, '(A)', advance="no") '['
       do k = 1, n3
-        write(iunit, '(A)', advance="no") '['
+        write(dbg_unit, '(A)', advance="no") '['
         do l = 1, n4
-          write(iunit, '(2A)', advance="no") trim(adjustl(content(i,j,k,l)))
+          write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(i,j,k,l)))
           if (l .lt. n4) then
-            write(iunit, '(2A)', advance="no") ','
+            write(dbg_unit, '(2A)', advance="no") ','
           end if
         end do
-        write(iunit, '(2A)', advance="no") ']'
+        write(dbg_unit, '(2A)', advance="no") ']'
         if (k .lt. n3) then
-          write(iunit, '(2A)', advance="no") ','
+          write(dbg_unit, '(2A)', advance="no") ','
         end if
       end do
-      write(iunit, '(2A)', advance="no") ']'
+      write(dbg_unit, '(2A)', advance="no") ']'
       if (j .lt. n2) then
-        write(iunit, '(2A)', advance="no") ','
+        write(dbg_unit, '(2A)', advance="no") ','
       end if
     end do
-    write(iunit, '(2A)', advance="no") ']'
+    write(dbg_unit, '(2A)', advance="no") ']'
     if (i .lt. n1) then
-      write(iunit, '(2A)', advance="no") ','
+      write(dbg_unit, '(2A)', advance="no") ','
     end if
   end do
-  write(iunit, '(2A)', advance="no") ']'
+  write(dbg_unit, '(2A)', advance="no") ']'
 
   has_previous = .true.
 end subroutine add_array_4d
@@ -176,48 +176,124 @@ subroutine add_array_5d(name, n1, n2, n3, n4, n5, content)
   integer :: i, j, k, l, m
 
   if (has_previous) then
-    write(iunit, '(A)', advance="no") ','
+    write(dbg_unit, '(A)', advance="no") ','
   end if
 
-  write(iunit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
+  write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
   do i = 1, n1
-    write(iunit, '(A)', advance="no") '['
+    write(dbg_unit, '(A)', advance="no") '['
     do j = 1, n2
-      write(iunit, '(A)', advance="no") '['
+      write(dbg_unit, '(A)', advance="no") '['
       do k = 1, n3
-        write(iunit, '(A)', advance="no") '['
+        write(dbg_unit, '(A)', advance="no") '['
         do l = 1, n4
-          write(iunit, '(A)', advance="no") '['
+          write(dbg_unit, '(A)', advance="no") '['
           do m = 1, n5
-            write(iunit, '(2A)', advance="no") trim(adjustl(content(i,j,k,l,m)))
+            write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(i,j,k,l,m)))
             if (m .lt. n5) then
-              write(iunit, '(2A)', advance="no") ','
+              write(dbg_unit, '(2A)', advance="no") ','
             end if
           end do
-          write(iunit, '(2A)', advance="no") ']'
+          write(dbg_unit, '(2A)', advance="no") ']'
           if (l .lt. n3) then
-            write(iunit, '(2A)', advance="no") ','
+            write(dbg_unit, '(2A)', advance="no") ','
           end if
         end do
-        write(iunit, '(2A)', advance="no") ']'
+        write(dbg_unit, '(2A)', advance="no") ']'
         if (k .lt. n3) then
-          write(iunit, '(2A)', advance="no") ','
+          write(dbg_unit, '(2A)', advance="no") ','
         end if
       end do
-      write(iunit, '(2A)', advance="no") ']'
+      write(dbg_unit, '(2A)', advance="no") ']'
       if (j .lt. n2) then
-        write(iunit, '(2A)', advance="no") ','
+        write(dbg_unit, '(2A)', advance="no") ','
       end if
     end do
-    write(iunit, '(2A)', advance="no") ']'
+    write(dbg_unit, '(2A)', advance="no") ']'
     if (i .lt. n1) then
-      write(iunit, '(2A)', advance="no") ','
+      write(dbg_unit, '(2A)', advance="no") ','
     end if
   end do
-  write(iunit, '(2A)', advance="no") ']'
+  write(dbg_unit, '(2A)', advance="no") ']'
 
   has_previous = .true.
 end subroutine add_array_5d
+
+!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-
+
+subroutine add_null(name)
+  character(len=*), intent(in) :: name
+
+  call add_element(name, "null")
+end subroutine add_null
+
+subroutine add_null_1d(name)
+  character(len=*), intent(in) :: name
+
+  call add_array_1d(name, 1, "null")
+end subroutine add_null_1d
+
+subroutine add_null_2d(name)
+  character(len=*), intent(in) :: name
+
+  call add_array_2d(name, 1, 1, "null")
+end subroutine add_null_2d
+
+subroutine add_null_3d(name)
+  character(len=*), intent(in) :: name
+
+  call add_array_3d(name, 1, 1, 1, "null")
+end subroutine add_null_3d
+
+subroutine add_null_4d(name)
+  character(len=*), intent(in) :: name
+
+  call add_array_4d(name, 1, 1, 1, 1, "null")
+end subroutine add_null_4d
+
+subroutine add_null_5d(name)
+  character(len=*), intent(in) :: name
+
+  call add_array_5d(name, 1, 1, 1, 1, 1, "null")
+end subroutine add_null_5d
+
+!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-
+
+subroutine add_none(name)
+  character(len=*), intent(in) :: name
+
+  call add_element(name, "")
+end subroutine add_none
+
+subroutine add_none_1d(name)
+  character(len=*), intent(in) :: name
+
+  call add_array_1d(name, 1, "")
+end subroutine add_none_1d
+
+subroutine add_none_2d(name)
+  character(len=*), intent(in) :: name
+
+  call add_array_2d(name, 1, 1, "")
+end subroutine add_none_2d
+
+subroutine add_none_3d(name)
+  character(len=*), intent(in) :: name
+
+  call add_array_3d(name, 1, 1, 1, "")
+end subroutine add_none_3d
+
+subroutine add_none_4d(name)
+  character(len=*), intent(in) :: name
+
+  call add_array_4d(name, 1, 1, 1, 1, "")
+end subroutine add_none_4d
+
+subroutine add_none_5d(name)
+  character(len=*), intent(in) :: name
+
+  call add_array_5d(name, 1, 1, 1, 1, 1, "")
+end subroutine add_none_5d
 
 !-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-
 
