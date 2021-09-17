@@ -38,4 +38,4 @@ In order to use this project in an existing CMake setup, simply include the foll
 add_subdirectory(json-fortran)
 ```
 
-It you do not work on VMEC, you will have to adjust the `vmec_sources` array name in `json-fortran`'s `CMakeLists.txt`.
+It you do not work on VMEC, you will have to adjust the `vmec_sources` array name in `json-fortran`'s [`CMakeLists.txt`](https://github.com/jonathanschilling/json-fortran/blob/master/CMakeLists.txt).
