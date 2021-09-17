@@ -24,3 +24,17 @@ produces the following JSON output in `test.json`:
 ```json
 {"a":42,"b":[1,2,3],"c":[[1,2,3],[4,5,6]]}
 ```
+
+## Include into existing projects
+Here is how you can add this project as a [Git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) into your code:
+
+```bash
+$ git submodule add git@github.com:jonathanschilling/json-fortran.git
+```
+
+In order to use this project in an existing CMake setup, simply include the following in your `CMakeLists.txt`:
+
+```
+add_subdirectory(json-fortran)
+```
+
