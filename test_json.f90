@@ -6,6 +6,8 @@ program test_json
 
   call open_dbg_out("test.json")
 
+  print *, "add  int arrays..."
+
   call add_int("a", 42)
   call add_int_1d("b", 3,       (/ 1, 2, 3 /) )
   call add_int_2d("c", 3, 2, (/ (/ 1, 2, 3 /), &
@@ -32,6 +34,8 @@ program test_json
                                    (/ 10, 11, 12 /) /) &
                                 /) /) /) )
 
+  print *, "add real arrays..."
+
   call add_real("A", 42.0_dp)
   call add_real_1d("B", 3,       (/ 1.0_dp, 2.0_dp, 3.0_dp /) )
   call add_real_2d("C", 3, 2, (/ (/ 1.0_dp, 2.0_dp, 3.0_dp /), &
@@ -57,6 +61,8 @@ program test_json
                                        (/ (/  7.0_dp,  8.0_dp,  9.0_dp /), &
                                           (/ 10.0_dp, 11.0_dp, 12.0_dp /) /) &
                                        /) /) /) )
+
+  print *, "done"
 
   call close_dbg_out()
 
