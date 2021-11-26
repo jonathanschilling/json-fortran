@@ -1,5 +1,8 @@
 program test_json
   use json
+  implicit none
+  integer, parameter :: dp = selected_real_kind(15, 300)
+
 
   call open_dbg_out("test.json")
 

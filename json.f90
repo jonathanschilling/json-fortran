@@ -195,7 +195,7 @@ subroutine add_array_5d(name, n1, n2, n3, n4, n5, content)
             end if
           end do
           write(dbg_unit, '(2A)', advance="no") ']'
-          if (l .lt. n3) then
+          if (l .lt. n4) then
             write(dbg_unit, '(2A)', advance="no") ','
           end if
         end do
@@ -324,10 +324,11 @@ subroutine add_int_1d(name, n, arr)
   deallocate(temp)
 end subroutine add_int_1d
 
-subroutine add_int_2d(name, n1, n2, arr)
+subroutine add_int_2d(name, n1, n2, arr, order)
   character(len=*), intent(in) :: name
   integer, intent(in) :: n1, n2
   integer, dimension(n1, n2), intent(in) :: arr
+  integer, dimension(2), intent(in), optional :: order
 
   character(len=64), dimension(:,:), allocatable :: temp
   integer :: i, j
@@ -338,15 +339,21 @@ subroutine add_int_2d(name, n1, n2, arr)
       write(temp(i,j), *) arr(i,j)
     end do
   end do
-  call add_array_2d(name, n1, n2, temp)
+  if (present(order)) then
+    call add_array_2d(name, n1, n2, &
+           reshape(temp, (/ n1, n2 /), order=order))
+  else
+    call add_array_2d(name, n1, n2, temp)
+  end if
 
   deallocate(temp)
 end subroutine add_int_2d
 
-subroutine add_int_3d(name, n1, n2, n3, arr)
+subroutine add_int_3d(name, n1, n2, n3, arr, order)
   character(len=*), intent(in) :: name
   integer, intent(in) :: n1, n2, n3
   integer, dimension(n1, n2, n3), intent(in) :: arr
+  integer, dimension(3), intent(in), optional :: order
 
   character(len=64), dimension(:,:,:), allocatable :: temp
   integer :: i, j, k
@@ -359,15 +366,21 @@ subroutine add_int_3d(name, n1, n2, n3, arr)
       end do
     end do
   end do
-  call add_array_3d(name, n1, n2, n3, temp)
+  if (present(order)) then
+    call add_array_3d(name, n1, n2, n3, &
+           reshape(temp, (/ n1, n2, n3 /), order=order))
+  else
+    call add_array_3d(name, n1, n2, n3, temp)
+  end if
 
   deallocate(temp)
 end subroutine add_int_3d
 
-subroutine add_int_4d(name, n1, n2, n3, n4, arr)
+subroutine add_int_4d(name, n1, n2, n3, n4, arr, order)
   character(len=*), intent(in) :: name
   integer, intent(in) :: n1, n2, n3, n4
   integer, dimension(n1,n2,n3,n4), intent(in) :: arr
+  integer, dimension(4), intent(in), optional :: order
 
   character(len=64), dimension(:,:,:,:), allocatable :: temp
   integer :: i, j, k, l
@@ -382,20 +395,26 @@ subroutine add_int_4d(name, n1, n2, n3, n4, arr)
       end do
     end do
   end do
-  call add_array_4d(name, n1, n2, n3, n4, temp)
+  if (present(order)) then
+    call add_array_4d(name, n1, n2, n3, n4, &
+           reshape(temp, (/ n1, n2, n3, n4 /), order=order))
+  else
+    call add_array_4d(name, n1, n2, n3, n4, temp)
+  end if
 
   deallocate(temp)
 end subroutine add_int_4d
 
-subroutine add_int_5d(name, n1, n2, n3, n4, n5, arr)
+subroutine add_int_5d(name, n1, n2, n3, n4, n5, arr, order)
   character(len=*), intent(in) :: name
   integer, intent(in) :: n1, n2, n3, n4, n5
   integer, dimension(n1,n2,n3,n4,n5), intent(in) :: arr
+  integer, dimension(5), intent(in), optional :: order
 
   character(len=64), dimension(:,:,:,:,:), allocatable :: temp
   integer :: i, j, k, l, m
 
-  allocate(temp(n1,n2,n3,n4, n5))
+  allocate(temp(n1,n2,n3,n4,n5))
   do i = 1, n1
     do j = 1, n2
       do k = 1, n3
@@ -407,7 +426,12 @@ subroutine add_int_5d(name, n1, n2, n3, n4, n5, arr)
       end do
     end do
   end do
-  call add_array_5d(name, n1, n2, n3, n4, n5, temp)
+  if (present(order)) then
+    call add_array_5d(name, n1, n2, n3, n4, n5, &
+           reshape(temp, (/ n1, n2, n3, n4, n5 /), order=order))
+  else
+    call add_array_5d(name, n1, n2, n3, n4, n5, temp)
+  end if
 
   deallocate(temp)
 end subroutine add_int_5d
@@ -441,10 +465,11 @@ subroutine add_real_1d(name, n, arr)
   deallocate(temp)
 end subroutine add_real_1d
 
-subroutine add_real_2d(name, n1, n2, arr)
+subroutine add_real_2d(name, n1, n2, arr, order)
   character(len=*), intent(in) :: name
   integer, intent(in) :: n1, n2
   real(dp), dimension(n1, n2), intent(in) :: arr
+  integer, dimension(2), intent(in), optional :: order
 
   character(len=64), dimension(:,:), allocatable :: temp
   integer :: i, j
@@ -455,15 +480,21 @@ subroutine add_real_2d(name, n1, n2, arr)
       write(temp(i,j), *) arr(i,j)
     end do
   end do
-  call add_array_2d(name, n1, n2, temp)
+  if (present(order)) then
+    call add_array_2d(name, n1, n2, &
+           reshape(temp, (/ n1, n2 /), order=order))
+  else
+    call add_array_2d(name, n1, n2, temp)
+  end if
 
   deallocate(temp)
 end subroutine add_real_2d
 
-subroutine add_real_3d(name, n1, n2, n3, arr)
+subroutine add_real_3d(name, n1, n2, n3, arr, order)
   character(len=*), intent(in) :: name
   integer, intent(in) :: n1, n2, n3
   real(dp), dimension(n1, n2, n3), intent(in) :: arr
+  integer, dimension(3), intent(in), optional :: order
 
   character(len=64), dimension(:,:,:), allocatable :: temp
   integer :: i, j, k
@@ -476,15 +507,21 @@ subroutine add_real_3d(name, n1, n2, n3, arr)
       end do
     end do
   end do
-  call add_array_3d(name, n1, n2, n3, temp)
+  if (present(order)) then
+    call add_array_3d(name, n1, n2, n3, &
+           reshape(temp, (/ n1, n2, n3 /), order=order))
+  else
+    call add_array_3d(name, n1, n2, n3, temp)
+  end if
 
   deallocate(temp)
 end subroutine add_real_3d
 
-subroutine add_real_4d(name, n1, n2, n3, n4, arr)
+subroutine add_real_4d(name, n1, n2, n3, n4, arr, order)
   character(len=*), intent(in) :: name
   integer, intent(in) :: n1, n2, n3, n4
   real(dp), dimension(n1,n2,n3,n4), intent(in) :: arr
+  integer, dimension(4), intent(in), optional :: order
 
   character(len=64), dimension(:,:,:,:), allocatable :: temp
   integer :: i, j, k, l
@@ -499,20 +536,26 @@ subroutine add_real_4d(name, n1, n2, n3, n4, arr)
       end do
     end do
   end do
-  call add_array_4d(name, n1, n2, n3, n4, temp)
+  if (present(order)) then
+    call add_array_4d(name, n1, n2, n3, n4, &
+           reshape(temp, (/ n1, n2, n3, n4 /), order=order))
+  else
+    call add_array_4d(name, n1, n2, n3, n4, temp)
+  end if
 
   deallocate(temp)
 end subroutine add_real_4d
 
-subroutine add_real_5d(name, n1, n2, n3, n4, n5, arr)
+subroutine add_real_5d(name, n1, n2, n3, n4, n5, arr, order)
   character(len=*), intent(in) :: name
   integer, intent(in) :: n1, n2, n3, n4, n5
   real(dp), dimension(n1,n2,n3,n4,n5), intent(in) :: arr
+  integer, dimension(5), intent(in), optional :: order
 
   character(len=64), dimension(:,:,:,:,:), allocatable :: temp
   integer :: i, j, k, l, m
 
-  allocate(temp(n1,n2,n3,n4, n5))
+  allocate(temp(n1,n2,n3,n4,n5))
   do i = 1, n1
     do j = 1, n2
       do k = 1, n3
@@ -524,7 +567,12 @@ subroutine add_real_5d(name, n1, n2, n3, n4, n5, arr)
       end do
     end do
   end do
-  call add_array_5d(name, n1, n2, n3, n4, n5, temp)
+  if (present(order)) then
+    call add_array_5d(name, n1, n2, n3, n4, n5, &
+           reshape(temp, (/ n1, n2, n3, n4, n5 /), order=order))
+  else
+    call add_array_5d(name, n1, n2, n3, n4, n5, temp)
+  end if
 
   deallocate(temp)
 end subroutine add_real_5d
