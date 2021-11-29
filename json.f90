@@ -25,20 +25,20 @@ end subroutine close_dbg_out
 
 !-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-
 
-subroutine add_element(name, content)
-  character(len=*), intent(in) :: name
+subroutine add_element(varname, content)
+  character(len=*), intent(in) :: varname
   character(len=*), intent(in) :: content
 
   if (has_previous) then
     write(dbg_unit, '(A)', advance="no") ','
   end if
-  write(dbg_unit, '(4A)', advance="no") '"',trim(adjustl(name)),'":',trim(adjustl(content))
+  write(dbg_unit, '(4A)', advance="no") '"',trim(adjustl(varname)),'":',trim(adjustl(content))
 
   has_previous = .true.
 end subroutine add_element
 
-subroutine add_array_1d(name, n, content)
-  character(len=*), intent(in) :: name
+subroutine add_array_1d(varname, n, content)
+  character(len=*), intent(in) :: varname
   integer, intent(in) :: n
   character(len=*), dimension(n), intent(in) :: content
 
@@ -48,7 +48,7 @@ subroutine add_array_1d(name, n, content)
     write(dbg_unit, '(A)', advance="no") ','
   end if
 
-  write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
+  write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(varname)),'":['
   do i = 1, n-1
     write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(i))),','
   end do
@@ -57,8 +57,8 @@ subroutine add_array_1d(name, n, content)
   has_previous = .true.
 end subroutine add_array_1d
 
-subroutine add_array_2d(name, n1, n2, content)
-  character(len=*), intent(in) :: name
+subroutine add_array_2d(varname, n1, n2, content)
+  character(len=*), intent(in) :: varname
   integer, intent(in) :: n1, n2
   character(len=*), dimension(n1,n2), intent(in) :: content
 
@@ -68,7 +68,7 @@ subroutine add_array_2d(name, n1, n2, content)
     write(dbg_unit, '(A)', advance="no") ','
   end if
 
-  write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
+  write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(varname)),'":['
   do i = 1, n1
     write(dbg_unit, '(A)', advance="no") '['
     do j = 1, n2
@@ -87,8 +87,8 @@ subroutine add_array_2d(name, n1, n2, content)
   has_previous = .true.
 end subroutine add_array_2d
 
-subroutine add_array_3d(name, n1, n2, n3, content)
-  character(len=*), intent(in) :: name
+subroutine add_array_3d(varname, n1, n2, n3, content)
+  character(len=*), intent(in) :: varname
   integer, intent(in) :: n1, n2, n3
   character(len=*), dimension(n1,n2,n3), intent(in) :: content
 
@@ -98,7 +98,7 @@ subroutine add_array_3d(name, n1, n2, n3, content)
     write(dbg_unit, '(A)', advance="no") ','
   end if
 
-  write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
+  write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(varname)),'":['
   do i = 1, n1
     write(dbg_unit, '(A)', advance="no") '['
     do j = 1, n2
@@ -124,8 +124,8 @@ subroutine add_array_3d(name, n1, n2, n3, content)
   has_previous = .true.
 end subroutine add_array_3d
 
-subroutine add_array_4d(name, n1, n2, n3, n4, content)
-  character(len=*), intent(in) :: name
+subroutine add_array_4d(varname, n1, n2, n3, n4, content)
+  character(len=*), intent(in) :: varname
   integer, intent(in) :: n1, n2, n3, n4
   character(len=*), dimension(n1,n2,n3,n4), intent(in) :: content
 
@@ -135,7 +135,7 @@ subroutine add_array_4d(name, n1, n2, n3, n4, content)
     write(dbg_unit, '(A)', advance="no") ','
   end if
 
-  write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
+  write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(varname)),'":['
   do i = 1, n1
     write(dbg_unit, '(A)', advance="no") '['
     do j = 1, n2
@@ -168,8 +168,8 @@ subroutine add_array_4d(name, n1, n2, n3, n4, content)
   has_previous = .true.
 end subroutine add_array_4d
 
-subroutine add_array_5d(name, n1, n2, n3, n4, n5, content)
-  character(len=*), intent(in) :: name
+subroutine add_array_5d(varname, n1, n2, n3, n4, n5, content)
+  character(len=*), intent(in) :: varname
   integer, intent(in) :: n1, n2, n3, n4, n5
   character(len=*), dimension(n1,n2,n3,n4,n5), intent(in) :: content
 
@@ -179,7 +179,7 @@ subroutine add_array_5d(name, n1, n2, n3, n4, n5, content)
     write(dbg_unit, '(A)', advance="no") ','
   end if
 
-  write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(name)),'":['
+  write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(varname)),'":['
   do i = 1, n1
     write(dbg_unit, '(A)', advance="no") '['
     do j = 1, n2
@@ -221,94 +221,94 @@ end subroutine add_array_5d
 
 !-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-
 
-subroutine add_null(name)
-  character(len=*), intent(in) :: name
+subroutine add_null(varname)
+  character(len=*), intent(in) :: varname
 
-  call add_element(name, "null")
+  call add_element(varname, "null")
 end subroutine add_null
 
-subroutine add_null_1d(name)
-  character(len=*), intent(in) :: name
+subroutine add_null_1d(varname)
+  character(len=*), intent(in) :: varname
 
-  call add_array_1d(name, 1, "null")
+  call add_array_1d(varname, 1, "null")
 end subroutine add_null_1d
 
-subroutine add_null_2d(name)
-  character(len=*), intent(in) :: name
+subroutine add_null_2d(varname)
+  character(len=*), intent(in) :: varname
 
-  call add_array_2d(name, 1, 1, "null")
+  call add_array_2d(varname, 1, 1, "null")
 end subroutine add_null_2d
 
-subroutine add_null_3d(name)
-  character(len=*), intent(in) :: name
+subroutine add_null_3d(varname)
+  character(len=*), intent(in) :: varname
 
-  call add_array_3d(name, 1, 1, 1, "null")
+  call add_array_3d(varname, 1, 1, 1, "null")
 end subroutine add_null_3d
 
-subroutine add_null_4d(name)
-  character(len=*), intent(in) :: name
+subroutine add_null_4d(varname)
+  character(len=*), intent(in) :: varname
 
-  call add_array_4d(name, 1, 1, 1, 1, "null")
+  call add_array_4d(varname, 1, 1, 1, 1, "null")
 end subroutine add_null_4d
 
-subroutine add_null_5d(name)
-  character(len=*), intent(in) :: name
+subroutine add_null_5d(varname)
+  character(len=*), intent(in) :: varname
 
-  call add_array_5d(name, 1, 1, 1, 1, 1, "null")
+  call add_array_5d(varname, 1, 1, 1, 1, 1, "null")
 end subroutine add_null_5d
 
 !-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-
 
-subroutine add_none(name)
-  character(len=*), intent(in) :: name
+subroutine add_none(varname)
+  character(len=*), intent(in) :: varname
 
-  call add_element(name, "")
+  call add_element(varname, "")
 end subroutine add_none
 
-subroutine add_none_1d(name)
-  character(len=*), intent(in) :: name
+subroutine add_none_1d(varname)
+  character(len=*), intent(in) :: varname
 
-  call add_array_1d(name, 1, "")
+  call add_array_1d(varname, 1, "")
 end subroutine add_none_1d
 
-subroutine add_none_2d(name)
-  character(len=*), intent(in) :: name
+subroutine add_none_2d(varname)
+  character(len=*), intent(in) :: varname
 
-  call add_array_2d(name, 1, 1, "")
+  call add_array_2d(varname, 1, 1, "")
 end subroutine add_none_2d
 
-subroutine add_none_3d(name)
-  character(len=*), intent(in) :: name
+subroutine add_none_3d(varname)
+  character(len=*), intent(in) :: varname
 
-  call add_array_3d(name, 1, 1, 1, "")
+  call add_array_3d(varname, 1, 1, 1, "")
 end subroutine add_none_3d
 
-subroutine add_none_4d(name)
-  character(len=*), intent(in) :: name
+subroutine add_none_4d(varname)
+  character(len=*), intent(in) :: varname
 
-  call add_array_4d(name, 1, 1, 1, 1, "")
+  call add_array_4d(varname, 1, 1, 1, 1, "")
 end subroutine add_none_4d
 
-subroutine add_none_5d(name)
-  character(len=*), intent(in) :: name
+subroutine add_none_5d(varname)
+  character(len=*), intent(in) :: varname
 
-  call add_array_5d(name, 1, 1, 1, 1, 1, "")
+  call add_array_5d(varname, 1, 1, 1, 1, 1, "")
 end subroutine add_none_5d
 
 !-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-
 
-subroutine add_int(name, val)
-  character(len=*), intent(in) :: name
+subroutine add_int(varname, val)
+  character(len=*), intent(in) :: varname
   integer         , intent(in) :: val
 
   character(len=64) :: temp
 
   write(temp, *) val
-  call add_element(name, temp)
+  call add_element(varname, temp)
 end subroutine add_int
 
-subroutine add_int_1d(name, n, arr)
-  character(len=*), intent(in) :: name
+subroutine add_int_1d(varname, n, arr)
+  character(len=*), intent(in) :: varname
   integer, intent(in) :: n
   integer, dimension(n), intent(in) :: arr
 
@@ -319,13 +319,13 @@ subroutine add_int_1d(name, n, arr)
   do i = 1, n
     write(temp(i), *) arr(i)
   end do
-  call add_array_1d(name, n, temp)
+  call add_array_1d(varname, n, temp)
 
   deallocate(temp)
 end subroutine add_int_1d
 
-subroutine add_int_2d(name, n1, n2, arr, order)
-  character(len=*), intent(in) :: name
+subroutine add_int_2d(varname, n1, n2, arr, order)
+  character(len=*), intent(in) :: varname
   integer, intent(in) :: n1, n2
   integer, dimension(n1, n2), intent(in) :: arr
   integer, dimension(2), intent(in), optional :: order
@@ -340,17 +340,17 @@ subroutine add_int_2d(name, n1, n2, arr, order)
     end do
   end do
   if (present(order)) then
-    call add_array_2d(name, n1, n2, &
+    call add_array_2d(varname, n1, n2, &
            reshape(temp, (/ n1, n2 /), order=order))
   else
-    call add_array_2d(name, n1, n2, temp)
+    call add_array_2d(varname, n1, n2, temp)
   end if
 
   deallocate(temp)
 end subroutine add_int_2d
 
-subroutine add_int_3d(name, n1, n2, n3, arr, order)
-  character(len=*), intent(in) :: name
+subroutine add_int_3d(varname, n1, n2, n3, arr, order)
+  character(len=*), intent(in) :: varname
   integer, intent(in) :: n1, n2, n3
   integer, dimension(n1, n2, n3), intent(in) :: arr
   integer, dimension(3), intent(in), optional :: order
@@ -367,17 +367,17 @@ subroutine add_int_3d(name, n1, n2, n3, arr, order)
     end do
   end do
   if (present(order)) then
-    call add_array_3d(name, n1, n2, n3, &
+    call add_array_3d(varname, n1, n2, n3, &
            reshape(temp, (/ n1, n2, n3 /), order=order))
   else
-    call add_array_3d(name, n1, n2, n3, temp)
+    call add_array_3d(varname, n1, n2, n3, temp)
   end if
 
   deallocate(temp)
 end subroutine add_int_3d
 
-subroutine add_int_4d(name, n1, n2, n3, n4, arr, order)
-  character(len=*), intent(in) :: name
+subroutine add_int_4d(varname, n1, n2, n3, n4, arr, order)
+  character(len=*), intent(in) :: varname
   integer, intent(in) :: n1, n2, n3, n4
   integer, dimension(n1,n2,n3,n4), intent(in) :: arr
   integer, dimension(4), intent(in), optional :: order
@@ -396,17 +396,17 @@ subroutine add_int_4d(name, n1, n2, n3, n4, arr, order)
     end do
   end do
   if (present(order)) then
-    call add_array_4d(name, n1, n2, n3, n4, &
+    call add_array_4d(varname, n1, n2, n3, n4, &
            reshape(temp, (/ n1, n2, n3, n4 /), order=order))
   else
-    call add_array_4d(name, n1, n2, n3, n4, temp)
+    call add_array_4d(varname, n1, n2, n3, n4, temp)
   end if
 
   deallocate(temp)
 end subroutine add_int_4d
 
-subroutine add_int_5d(name, n1, n2, n3, n4, n5, arr, order)
-  character(len=*), intent(in) :: name
+subroutine add_int_5d(varname, n1, n2, n3, n4, n5, arr, order)
+  character(len=*), intent(in) :: varname
   integer, intent(in) :: n1, n2, n3, n4, n5
   integer, dimension(n1,n2,n3,n4,n5), intent(in) :: arr
   integer, dimension(5), intent(in), optional :: order
@@ -427,10 +427,10 @@ subroutine add_int_5d(name, n1, n2, n3, n4, n5, arr, order)
     end do
   end do
   if (present(order)) then
-    call add_array_5d(name, n1, n2, n3, n4, n5, &
+    call add_array_5d(varname, n1, n2, n3, n4, n5, &
            reshape(temp, (/ n1, n2, n3, n4, n5 /), order=order))
   else
-    call add_array_5d(name, n1, n2, n3, n4, n5, temp)
+    call add_array_5d(varname, n1, n2, n3, n4, n5, temp)
   end if
 
   deallocate(temp)
@@ -438,18 +438,18 @@ end subroutine add_int_5d
 
 !-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-
 
-subroutine add_real(name, val)
-  character(len=*), intent(in) :: name
+subroutine add_real(varname, val)
+  character(len=*), intent(in) :: varname
   real(dp)        , intent(in) :: val
 
   character(len=64) :: temp
 
   write(temp, *) val
-  call add_element(name, temp)
+  call add_element(varname, temp)
 end subroutine add_real
 
-subroutine add_real_1d(name, n, arr)
-  character(len=*), intent(in) :: name
+subroutine add_real_1d(varname, n, arr)
+  character(len=*), intent(in) :: varname
   integer, intent(in) :: n
   real(dp), dimension(n), intent(in) :: arr
 
@@ -460,13 +460,13 @@ subroutine add_real_1d(name, n, arr)
   do i = 1, n
     write(temp(i), *) arr(i)
   end do
-  call add_array_1d(name, n, temp)
+  call add_array_1d(varname, n, temp)
 
   deallocate(temp)
 end subroutine add_real_1d
 
-subroutine add_real_2d(name, n1, n2, arr, order)
-  character(len=*), intent(in) :: name
+subroutine add_real_2d(varname, n1, n2, arr, order)
+  character(len=*), intent(in) :: varname
   integer, intent(in) :: n1, n2
   real(dp), dimension(n1, n2), intent(in) :: arr
   integer, dimension(2), intent(in), optional :: order
@@ -481,17 +481,17 @@ subroutine add_real_2d(name, n1, n2, arr, order)
     end do
   end do
   if (present(order)) then
-    call add_array_2d(name, n1, n2, &
+    call add_array_2d(varname, n1, n2, &
            reshape(temp, (/ n1, n2 /), order=order))
   else
-    call add_array_2d(name, n1, n2, temp)
+    call add_array_2d(varname, n1, n2, temp)
   end if
 
   deallocate(temp)
 end subroutine add_real_2d
 
-subroutine add_real_3d(name, n1, n2, n3, arr, order)
-  character(len=*), intent(in) :: name
+subroutine add_real_3d(varname, n1, n2, n3, arr, order)
+  character(len=*), intent(in) :: varname
   integer, intent(in) :: n1, n2, n3
   real(dp), dimension(n1, n2, n3), intent(in) :: arr
   integer, dimension(3), intent(in), optional :: order
@@ -508,17 +508,17 @@ subroutine add_real_3d(name, n1, n2, n3, arr, order)
     end do
   end do
   if (present(order)) then
-    call add_array_3d(name, n1, n2, n3, &
+    call add_array_3d(varname, n1, n2, n3, &
            reshape(temp, (/ n1, n2, n3 /), order=order))
   else
-    call add_array_3d(name, n1, n2, n3, temp)
+    call add_array_3d(varname, n1, n2, n3, temp)
   end if
 
   deallocate(temp)
 end subroutine add_real_3d
 
-subroutine add_real_4d(name, n1, n2, n3, n4, arr, order)
-  character(len=*), intent(in) :: name
+subroutine add_real_4d(varname, n1, n2, n3, n4, arr, order)
+  character(len=*), intent(in) :: varname
   integer, intent(in) :: n1, n2, n3, n4
   real(dp), dimension(n1,n2,n3,n4), intent(in) :: arr
   integer, dimension(4), intent(in), optional :: order
@@ -537,17 +537,17 @@ subroutine add_real_4d(name, n1, n2, n3, n4, arr, order)
     end do
   end do
   if (present(order)) then
-    call add_array_4d(name, n1, n2, n3, n4, &
+    call add_array_4d(varname, n1, n2, n3, n4, &
            reshape(temp, (/ n1, n2, n3, n4 /), order=order))
   else
-    call add_array_4d(name, n1, n2, n3, n4, temp)
+    call add_array_4d(varname, n1, n2, n3, n4, temp)
   end if
 
   deallocate(temp)
 end subroutine add_real_4d
 
-subroutine add_real_5d(name, n1, n2, n3, n4, n5, arr, order)
-  character(len=*), intent(in) :: name
+subroutine add_real_5d(varname, n1, n2, n3, n4, n5, arr, order)
+  character(len=*), intent(in) :: varname
   integer, intent(in) :: n1, n2, n3, n4, n5
   real(dp), dimension(n1,n2,n3,n4,n5), intent(in) :: arr
   integer, dimension(5), intent(in), optional :: order
@@ -568,10 +568,10 @@ subroutine add_real_5d(name, n1, n2, n3, n4, n5, arr, order)
     end do
   end do
   if (present(order)) then
-    call add_array_5d(name, n1, n2, n3, n4, n5, &
+    call add_array_5d(varname, n1, n2, n3, n4, n5, &
            reshape(temp, (/ n1, n2, n3, n4, n5 /), order=order))
   else
-    call add_array_5d(name, n1, n2, n3, n4, n5, temp)
+    call add_array_5d(varname, n1, n2, n3, n4, n5, temp)
   end if
 
   deallocate(temp)
