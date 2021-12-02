@@ -297,6 +297,168 @@ end subroutine add_none_5d
 
 !-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-
 
+subroutine add_logical(varname, val)
+  character(len=*), intent(in) :: varname
+  logical         , intent(in) :: val
+
+  if (val) then
+    call add_element(varname, "true")
+  else
+    call add_element(varname, "false")
+  end if
+end subroutine add_logical
+
+subroutine add_logical_1d(varname, n, arr)
+  character(len=*), intent(in) :: varname
+  integer, intent(in) :: n
+  logical, dimension(n), intent(in) :: arr
+
+  character(len=64), dimension(:), allocatable :: temp
+  integer :: i
+
+  allocate(temp(n))
+  do i = 1, n
+    if (arr(i)) then
+      temp(i) = "true"
+    else
+      temp(i) = "false"
+    end if
+  end do
+  call add_array_1d(varname, n, temp)
+
+  deallocate(temp)
+end subroutine add_logical_1d
+
+subroutine add_logical_2d(varname, n1, n2, arr, order)
+  character(len=*), intent(in) :: varname
+  integer, intent(in) :: n1, n2
+  logical, dimension(n1, n2), intent(in) :: arr
+  integer, dimension(2), intent(in), optional :: order
+
+  character(len=64), dimension(:,:), allocatable :: temp
+  integer :: i, j
+
+  allocate(temp(n1, n2))
+  do i = 1, n1
+    do j = 1, n2
+      if (arr(i, j)) then
+        temp(i, j) = "true"
+      else
+        temp(i, j) = "false"
+      end if
+    end do
+  end do
+  if (present(order)) then
+    call add_array_2d(varname, n1, n2, &
+           reshape(temp, (/ n1, n2 /), order=order))
+  else
+    call add_array_2d(varname, n1, n2, temp)
+  end if
+
+  deallocate(temp)
+end subroutine add_logical_2d
+
+subroutine add_logical_3d(varname, n1, n2, n3, arr, order)
+  character(len=*), intent(in) :: varname
+  integer, intent(in) :: n1, n2, n3
+  logical, dimension(n1, n2, n3), intent(in) :: arr
+  integer, dimension(3), intent(in), optional :: order
+
+  character(len=64), dimension(:,:,:), allocatable :: temp
+  integer :: i, j, k
+
+  allocate(temp(n1,n2,n3))
+  do i = 1, n1
+    do j = 1, n2
+      do k = 1, n3
+        if (arr(i, j, k)) then
+          temp(i, j, k) = "true"
+        else
+          temp(i, j, k) = "false"
+        end if
+      end do
+    end do
+  end do
+  if (present(order)) then
+    call add_array_3d(varname, n1, n2, n3, &
+           reshape(temp, (/ n1, n2, n3 /), order=order))
+  else
+    call add_array_3d(varname, n1, n2, n3, temp)
+  end if
+
+  deallocate(temp)
+end subroutine add_logical_3d
+
+subroutine add_logical_4d(varname, n1, n2, n3, n4, arr, order)
+  character(len=*), intent(in) :: varname
+  integer, intent(in) :: n1, n2, n3, n4
+  logical, dimension(n1,n2,n3,n4), intent(in) :: arr
+  integer, dimension(4), intent(in), optional :: order
+
+  character(len=64), dimension(:,:,:,:), allocatable :: temp
+  integer :: i, j, k, l
+
+  allocate(temp(n1,n2,n3,n4))
+  do i = 1, n1
+    do j = 1, n2
+      do k = 1, n3
+        do l = 1, n4
+          if (arr(i, j, k, l)) then
+            temp(i, j, k, l) = "true"
+          else
+            temp(i, j, k, l) = "false"
+          end if
+        end do
+      end do
+    end do
+  end do
+  if (present(order)) then
+    call add_array_4d(varname, n1, n2, n3, n4, &
+           reshape(temp, (/ n1, n2, n3, n4 /), order=order))
+  else
+    call add_array_4d(varname, n1, n2, n3, n4, temp)
+  end if
+
+  deallocate(temp)
+end subroutine add_logical_4d
+
+subroutine add_logical_5d(varname, n1, n2, n3, n4, n5, arr, order)
+  character(len=*), intent(in) :: varname
+  integer, intent(in) :: n1, n2, n3, n4, n5
+  logical, dimension(n1,n2,n3,n4,n5), intent(in) :: arr
+  integer, dimension(5), intent(in), optional :: order
+
+  character(len=64), dimension(:,:,:,:,:), allocatable :: temp
+  integer :: i, j, k, l, m
+
+  allocate(temp(n1,n2,n3,n4,n5))
+  do i = 1, n1
+    do j = 1, n2
+      do k = 1, n3
+        do l = 1, n4
+          do m = 1, n5
+            if (arr(i, j, k, l, m)) then
+              temp(i, j, k, l, m) = "true"
+            else
+              temp(i, j, k, l, m) = "false"
+            end if
+          end do
+        end do
+      end do
+    end do
+  end do
+  if (present(order)) then
+    call add_array_5d(varname, n1, n2, n3, n4, n5, &
+           reshape(temp, (/ n1, n2, n3, n4, n5 /), order=order))
+  else
+    call add_array_5d(varname, n1, n2, n3, n4, n5, temp)
+  end if
+
+  deallocate(temp)
+end subroutine add_logical_5d
+
+!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-
+
 subroutine add_int(varname, val)
   character(len=*), intent(in) :: varname
   integer         , intent(in) :: val
