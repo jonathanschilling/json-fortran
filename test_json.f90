@@ -3,6 +3,7 @@ program test_json
   implicit none
   integer, parameter :: dp = selected_real_kind(15, 300)
 
+  json_pretty_print = .true.
 
   call open_dbg_out("test.json")
 

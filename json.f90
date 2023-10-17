@@ -5,6 +5,7 @@ implicit none
 integer, parameter :: dbg_unit = 42
 integer, parameter, private :: dp = selected_real_kind(15, 300)
 logical  :: has_previous
+logical  :: json_pretty_print = .false.
 
 contains
 
@@ -14,12 +15,20 @@ subroutine open_dbg_out(filename)
   character(len=*), intent(in) :: filename
 
   open(unit=dbg_unit, file=trim(filename), status="unknown")
-  write(dbg_unit, '(A)', advance="no") "{"
+  if (json_pretty_print) then
+    write(dbg_unit, '(A)') "{"
+  else
+    write(dbg_unit, '(A)', advance="no") "{"
+  end if
   has_previous = .false.
 end subroutine open_dbg_out
 
 subroutine close_dbg_out
-  write(dbg_unit, '(A)', advance="no") "}"
+  if (json_pretty_print) then
+    write(dbg_unit, '(A)') "}"
+  else
+    write(dbg_unit, '(A)', advance="no") "}"
+  end if
   close(dbg_unit)
 end subroutine close_dbg_out
 
@@ -29,8 +38,14 @@ subroutine add_element(varname, content)
   character(len=*), intent(in) :: varname
   character(len=*), intent(in) :: content
 
-  if (has_previous) then
-    write(dbg_unit, '(A)', advance="no") ','
+  if (json_pretty_print) then
+    if (has_previous) then
+      write(dbg_unit, '(A)') ','
+    end if
+  else
+    if (has_previous) then
+      write(dbg_unit, '(A)', advance="no") ','
+    end if
   end if
   write(dbg_unit, '(4A)', advance="no") '"',trim(adjustl(varname)),'":',trim(adjustl(content))
 
@@ -44,14 +59,23 @@ subroutine add_array_1d(varname, n, content)
 
   integer :: i
 
-  if (has_previous) then
-    write(dbg_unit, '(A)', advance="no") ','
+  if (json_pretty_print) then
+    if (has_previous) then
+      write(dbg_unit, '(A)') ','
+    end if
+    write(dbg_unit, '(3A)') '"',trim(adjustl(varname)),'":['
+    do i = 1, n-1
+      write(dbg_unit, '(2A)') trim(adjustl(content(i))),','
+    end do
+  else
+    if (has_previous) then
+      write(dbg_unit, '(A)', advance="no") ','
+    end if
+    write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(varname)),'":['
+    do i = 1, n-1
+      write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(i))),','
+    end do
   end if
-
-  write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(varname)),'":['
-  do i = 1, n-1
-    write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(i))),','
-  end do
   write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(n))),']'
 
   has_previous = .true.
@@ -64,24 +88,43 @@ subroutine add_array_2d(varname, n1, n2, content)
 
   integer :: i, j
 
-  if (has_previous) then
-    write(dbg_unit, '(A)', advance="no") ','
-  end if
-
-  write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(varname)),'":['
-  do i = 1, n1
-    write(dbg_unit, '(A)', advance="no") '['
-    do j = 1, n2
-      write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(i,j)))
-      if (j .lt. n2) then
+  if (json_pretty_print) then
+    if (has_previous) then
+      write(dbg_unit, '(A)') ','
+    end if
+    write(dbg_unit, '(3A)') '"',trim(adjustl(varname)),'":['
+    do i = 1, n1
+      write(dbg_unit, '(A)', advance="no") '['
+      do j = 1, n2
+        write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(i,j)))
+        if (j .lt. n2) then
+          write(dbg_unit, '(2A)') ','
+        end if
+      end do
+      write(dbg_unit, '(2A)', advance="no") ']'
+      if (i .lt. n1) then
+        write(dbg_unit, '(2A)') ','
+      end if
+    end do
+  else
+    if (has_previous) then
+      write(dbg_unit, '(A)', advance="no") ','
+    end if
+    write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(varname)),'":['
+    do i = 1, n1
+      write(dbg_unit, '(A)', advance="no") '['
+      do j = 1, n2
+        write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(i,j)))
+        if (j .lt. n2) then
+          write(dbg_unit, '(2A)', advance="no") ','
+        end if
+      end do
+      write(dbg_unit, '(2A)', advance="no") ']'
+      if (i .lt. n1) then
         write(dbg_unit, '(2A)', advance="no") ','
       end if
     end do
-    write(dbg_unit, '(2A)', advance="no") ']'
-    if (i .lt. n1) then
-      write(dbg_unit, '(2A)', advance="no") ','
-    end if
-  end do
+  end if
   write(dbg_unit, '(2A)', advance="no") ']'
 
   has_previous = .true.
@@ -94,31 +137,57 @@ subroutine add_array_3d(varname, n1, n2, n3, content)
 
   integer :: i, j, k
 
-  if (has_previous) then
-    write(dbg_unit, '(A)', advance="no") ','
-  end if
-
-  write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(varname)),'":['
-  do i = 1, n1
-    write(dbg_unit, '(A)', advance="no") '['
-    do j = 1, n2
+  if (json_pretty_print) then
+    if (has_previous) then
+      write(dbg_unit, '(A)') ','
+    end if
+    write(dbg_unit, '(3A)') '"',trim(adjustl(varname)),'":['
+    do i = 1, n1
       write(dbg_unit, '(A)', advance="no") '['
-      do k = 1, n3
-        write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(i,j,k)))
-        if (k .lt. n3) then
+      do j = 1, n2
+        write(dbg_unit, '(A)', advance="no") '['
+        do k = 1, n3
+          write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(i,j,k)))
+          if (k .lt. n3) then
+            write(dbg_unit, '(2A)') ','
+          end if
+        end do
+        write(dbg_unit, '(2A)', advance="no") ']'
+        if (j .lt. n2) then
+          write(dbg_unit, '(2A)') ','
+        end if
+      end do
+      write(dbg_unit, '(2A)', advance="no") ']'
+      if (i .lt. n1) then
+        write(dbg_unit, '(2A)') ','
+      end if
+    end do
+  else
+    if (has_previous) then
+      write(dbg_unit, '(A)', advance="no") ','
+    end if
+    write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(varname)),'":['
+    do i = 1, n1
+      write(dbg_unit, '(A)', advance="no") '['
+      do j = 1, n2
+        write(dbg_unit, '(A)', advance="no") '['
+        do k = 1, n3
+          write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(i,j,k)))
+          if (k .lt. n3) then
+            write(dbg_unit, '(2A)', advance="no") ','
+          end if
+        end do
+        write(dbg_unit, '(2A)', advance="no") ']'
+        if (j .lt. n2) then
           write(dbg_unit, '(2A)', advance="no") ','
         end if
       end do
       write(dbg_unit, '(2A)', advance="no") ']'
-      if (j .lt. n2) then
+      if (i .lt. n1) then
         write(dbg_unit, '(2A)', advance="no") ','
       end if
     end do
-    write(dbg_unit, '(2A)', advance="no") ']'
-    if (i .lt. n1) then
-      write(dbg_unit, '(2A)', advance="no") ','
-    end if
-  end do
+  end if
   write(dbg_unit, '(2A)', advance="no") ']'
 
   has_previous = .true.
@@ -131,38 +200,71 @@ subroutine add_array_4d(varname, n1, n2, n3, n4, content)
 
   integer :: i, j, k, l
 
-  if (has_previous) then
-    write(dbg_unit, '(A)', advance="no") ','
-  end if
-
-  write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(varname)),'":['
-  do i = 1, n1
-    write(dbg_unit, '(A)', advance="no") '['
-    do j = 1, n2
+  if (json_pretty_print) then
+    if (has_previous) then
+      write(dbg_unit, '(A)') ','
+    end if
+    write(dbg_unit, '(3A)') '"',trim(adjustl(varname)),'":['
+    do i = 1, n1
       write(dbg_unit, '(A)', advance="no") '['
-      do k = 1, n3
+      do j = 1, n2
         write(dbg_unit, '(A)', advance="no") '['
-        do l = 1, n4
-          write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(i,j,k,l)))
-          if (l .lt. n4) then
+        do k = 1, n3
+          write(dbg_unit, '(A)', advance="no") '['
+          do l = 1, n4
+            write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(i,j,k,l)))
+            if (l .lt. n4) then
+              write(dbg_unit, '(2A)') ','
+            end if
+          end do
+          write(dbg_unit, '(2A)', advance="no") ']'
+          if (k .lt. n3) then
+            write(dbg_unit, '(2A)') ','
+          end if
+        end do
+        write(dbg_unit, '(2A)', advance="no") ']'
+        if (j .lt. n2) then
+          write(dbg_unit, '(2A)') ','
+        end if
+      end do
+      write(dbg_unit, '(2A)', advance="no") ']'
+      if (i .lt. n1) then
+        write(dbg_unit, '(2A)') ','
+      end if
+    end do
+  else
+    if (has_previous) then
+      write(dbg_unit, '(A)', advance="no") ','
+    end if
+    write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(varname)),'":['
+    do i = 1, n1
+      write(dbg_unit, '(A)', advance="no") '['
+      do j = 1, n2
+        write(dbg_unit, '(A)', advance="no") '['
+        do k = 1, n3
+          write(dbg_unit, '(A)', advance="no") '['
+          do l = 1, n4
+            write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(i,j,k,l)))
+            if (l .lt. n4) then
+              write(dbg_unit, '(2A)', advance="no") ','
+            end if
+          end do
+          write(dbg_unit, '(2A)', advance="no") ']'
+          if (k .lt. n3) then
             write(dbg_unit, '(2A)', advance="no") ','
           end if
         end do
         write(dbg_unit, '(2A)', advance="no") ']'
-        if (k .lt. n3) then
+        if (j .lt. n2) then
           write(dbg_unit, '(2A)', advance="no") ','
         end if
       end do
       write(dbg_unit, '(2A)', advance="no") ']'
-      if (j .lt. n2) then
+      if (i .lt. n1) then
         write(dbg_unit, '(2A)', advance="no") ','
       end if
     end do
-    write(dbg_unit, '(2A)', advance="no") ']'
-    if (i .lt. n1) then
-      write(dbg_unit, '(2A)', advance="no") ','
-    end if
-  end do
+  end if
   write(dbg_unit, '(2A)', advance="no") ']'
 
   has_previous = .true.
@@ -175,45 +277,85 @@ subroutine add_array_5d(varname, n1, n2, n3, n4, n5, content)
 
   integer :: i, j, k, l, m
 
-  if (has_previous) then
-    write(dbg_unit, '(A)', advance="no") ','
-  end if
-
-  write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(varname)),'":['
-  do i = 1, n1
-    write(dbg_unit, '(A)', advance="no") '['
-    do j = 1, n2
+  if (json_pretty_print) then
+    if (has_previous) then
+      write(dbg_unit, '(A)') ','
+    end if
+    write(dbg_unit, '(3A)') '"',trim(adjustl(varname)),'":['
+    do i = 1, n1
       write(dbg_unit, '(A)', advance="no") '['
-      do k = 1, n3
+      do j = 1, n2
         write(dbg_unit, '(A)', advance="no") '['
-        do l = 1, n4
+        do k = 1, n3
           write(dbg_unit, '(A)', advance="no") '['
-          do m = 1, n5
-            write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(i,j,k,l,m)))
-            if (m .lt. n5) then
+          do l = 1, n4
+            write(dbg_unit, '(A)', advance="no") '['
+            do m = 1, n5
+              write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(i,j,k,l,m)))
+              if (m .lt. n5) then
+                write(dbg_unit, '(2A)') ','
+              end if
+            end do
+            write(dbg_unit, '(2A)', advance="no") ']'
+            if (l .lt. n4) then
+              write(dbg_unit, '(2A)') ','
+            end if
+          end do
+          write(dbg_unit, '(2A)', advance="no") ']'
+          if (k .lt. n3) then
+            write(dbg_unit, '(2A)') ','
+          end if
+        end do
+        write(dbg_unit, '(2A)', advance="no") ']'
+        if (j .lt. n2) then
+          write(dbg_unit, '(2A)') ','
+        end if
+      end do
+      write(dbg_unit, '(2A)', advance="no") ']'
+      if (i .lt. n1) then
+        write(dbg_unit, '(2A)') ','
+      end if
+    end do
+  else
+    if (has_previous) then
+      write(dbg_unit, '(A)', advance="no") ','
+    end if
+    write(dbg_unit, '(3A)', advance="no") '"',trim(adjustl(varname)),'":['
+    do i = 1, n1
+      write(dbg_unit, '(A)', advance="no") '['
+      do j = 1, n2
+        write(dbg_unit, '(A)', advance="no") '['
+        do k = 1, n3
+          write(dbg_unit, '(A)', advance="no") '['
+          do l = 1, n4
+            write(dbg_unit, '(A)', advance="no") '['
+            do m = 1, n5
+              write(dbg_unit, '(2A)', advance="no") trim(adjustl(content(i,j,k,l,m)))
+              if (m .lt. n5) then
+                write(dbg_unit, '(2A)', advance="no") ','
+              end if
+            end do
+            write(dbg_unit, '(2A)', advance="no") ']'
+            if (l .lt. n4) then
               write(dbg_unit, '(2A)', advance="no") ','
             end if
           end do
           write(dbg_unit, '(2A)', advance="no") ']'
-          if (l .lt. n4) then
+          if (k .lt. n3) then
             write(dbg_unit, '(2A)', advance="no") ','
           end if
         end do
         write(dbg_unit, '(2A)', advance="no") ']'
-        if (k .lt. n3) then
+        if (j .lt. n2) then
           write(dbg_unit, '(2A)', advance="no") ','
         end if
       end do
       write(dbg_unit, '(2A)', advance="no") ']'
-      if (j .lt. n2) then
+      if (i .lt. n1) then
         write(dbg_unit, '(2A)', advance="no") ','
       end if
     end do
-    write(dbg_unit, '(2A)', advance="no") ']'
-    if (i .lt. n1) then
-      write(dbg_unit, '(2A)', advance="no") ','
-    end if
-  end do
+  end if
   write(dbg_unit, '(2A)', advance="no") ']'
 
   has_previous = .true.
