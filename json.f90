@@ -14,6 +14,15 @@ contains
 subroutine open_dbg_out(filename)
   character(len=*), intent(in) :: filename
 
+  logical :: dbg_unit_in_use
+
+  ! check if the desired unit number is already in use
+  inquire(unit=dbg_unit, opened=dbg_unit_in_use)
+  if (dbg_unit_in_use) then
+    print *, "dbg_unit=", dbg_unit, "already in use"
+    stop 1
+  end if
+
   open(unit=dbg_unit, file=trim(filename), status="unknown")
   if (json_pretty_print) then
     write(dbg_unit, '(A)') "{"
